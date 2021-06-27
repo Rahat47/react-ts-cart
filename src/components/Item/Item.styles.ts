@@ -8,14 +8,20 @@ export const Wrapper = styled.div`
     border: 1px solid lightblue;
     border-radius: 20px;
     height: 100%;
+    line-height: 1.4;
 
     button {
         border-radius: 0 0 20px 20px;
     }
 
+    h3 {
+        color: #053742;
+        cursor: pointer;
+    }
+
     img {
-        max-height: 250px;
-        object-fit: cover;
+        height: 250px;
+        object-fit: contain;
         border-radius: 20px 20px 0 0;
     }
 
