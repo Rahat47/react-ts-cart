@@ -6,6 +6,7 @@ import { AddShoppingCart } from "@material-ui/icons";
 import Item from "./components/Item/Item";
 //Styles
 import { StyledButton, Wrapper } from "./app.styles";
+import Cart from "./components/cart/Cart";
 // Types
 export type CartItemType = {
     id: number;
@@ -38,8 +39,33 @@ function App() {
 
     const getTotalItems = (items: CartItemType[]) =>
         items.reduce((acc: number, item: CartItemType) => acc + item.amount, 0);
-    const handleAddToCart = (item: CartItemType) => null;
-    const handleRemoveFromCart = () => null;
+
+    const handleAddToCart = (item: CartItemType) => {
+        setCartItems(prev => {
+            const isItemInCart = prev.find(el => el.id === item.id);
+
+            if (isItemInCart) {
+                return prev.map(el =>
+                    el.id === item.id ? { ...el, amount: el.amount + 1 } : el
+                );
+            }
+
+            return [...prev, { ...item, amount: 1 }];
+        });
+    };
+
+    const handleRemoveFromCart = (id: number) => {
+        setCartItems(prev =>
+            prev.reduce((acc, item) => {
+                if (item.id === id) {
+                    if (item.amount === 1) return acc;
+                    return [...acc, { ...item, amount: item.amount - 1 }];
+                } else {
+                    return [...acc, item];
+                }
+            }, [] as CartItemType[])
+        );
+    };
 
     return (
         <Wrapper>
@@ -48,13 +74,19 @@ function App() {
                 open={cartOpen}
                 onClose={() => setCartOpen(false)}
             >
-                Cart goes Here
+                <Cart
+                    cartItems={cartItems}
+                    addToCart={handleAddToCart}
+                    removeFromCart={handleRemoveFromCart}
+                />
             </Drawer>
+
             <StyledButton onClick={() => setCartOpen(true)}>
                 <Badge badgeContent={getTotalItems(cartItems)} color="error">
                     <AddShoppingCart />
                 </Badge>
             </StyledButton>
+
             <Grid container spacing={3}>
                 {data?.map(item => (
                     <Grid item key={item.id} xs={12} sm={4}>
